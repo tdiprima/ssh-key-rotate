@@ -1,6 +1,7 @@
 # SSH Key Rotate
+Because you should have 1 key for each server.
 
-Brief usage guide for `ssh_key_rotate.sh`.
+Usage guide for `ssh_key_rotate.sh`:
 
 ## What It Does
 

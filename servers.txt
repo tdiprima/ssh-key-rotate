@@ -1,0 +1,11 @@
+# servers.txt — One server per line
+# Format: IP_OR_HOSTNAME  [alias]  [user]
+#
+# alias  = friendly name (used in ~/.ssh/config and key filename)
+# user   = SSH user for that server (defaults to SSH_USER env var, or "root")
+#
+# Examples:
+192.168.1.10    webserver     deploy
+192.168.1.20    dbserver      root
+10.0.0.50       staging       ubuntu
+myapp.example.com  production  ec2-user

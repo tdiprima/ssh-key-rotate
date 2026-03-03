@@ -1,87 +1,76 @@
-# SSH Key Rotate
-Because you should have 1 key for each server.
+# ssh-key-rotate
 
-Usage guide for `ssh_key_rotate.sh`:
+Tired of sharing one SSH key across every server? This script fixes that.
 
-## What It Does
+It generates a unique key per server, deploys the new keys, revokes the old shared key, and wires everything up in `~/.ssh/config` so you can just type `ssh webserver` and be done with it.
 
-- Generates a new per-server SSH key.
-- Deploys the new public key to each server.
-- Revokes the old shared key from each server.
-- Updates `~/.ssh/config` with per-server aliases and identity files.
+## What it does
 
-## Prerequisites
+1. Reads your server list from `servers.txt`
+2. Generates a fresh SSH key for each server (ed25519 by default)
+3. Deploys the new public key to the remote `~/.ssh/authorized_keys`
+4. Revokes the old shared key from each server
+5. Updates `~/.ssh/config` with a tidy `Host` block per server
+6. Shows a summary of what succeeded and what didn't
 
-- SSH access to each server using the old key.
-- `servers.txt` listing targets (one per line):
+## Setup
 
-```text
-IP_OR_HOSTNAME  [optional_alias]  [optional_user]
-192.168.1.10    webserver         deploy
-10.0.0.5        dbserver
+**1. Edit `servers.txt`** — one server per line:
+
+```
+IP_OR_HOSTNAME      [optional_alias]  [optional_user]
+192.168.1.10        webserver         deploy
+10.0.0.5            dbserver
 myhost.example.com
 ```
 
-## Configuration
+- `alias` — friendly name used in `~/.ssh/config` and the key filename (defaults to the hostname)
+- `user` — SSH user for that server (defaults to the `SSH_USER` env var, or `root`)
 
-Defaults can be overridden with environment variables:
+**2. Set your old key** (the one you want to revoke):
 
-- `OLD_PUB_KEY` (default: `~/.ssh/id_rsa.pub`)
-- `SSH_USER` (default: `root`)
-- `KEY_TYPE` (default: `ed25519`; use `rsa` for legacy)
-- `RSA_BITS` (default: `4096` if `KEY_TYPE=rsa`)
-- `KEY_DIR` (default: `~/.ssh/per-server`)
-- `SERVERS_FILE` (default: `./servers.txt`)
+```bash
+export OLD_PUB_KEY=~/.ssh/id_rsa.pub   # default; change if needed
+```
 
-## Run
-
-⚠️ Always keep an existing SSH session open while testing new keys. ⚠️
+**3. Run it:**
 
 ```bash
 ./ssh_key_rotate.sh
 ```
 
-Example with overrides:
+The script will show you the plan and ask for confirmation before touching anything.
+
+## After it runs
+
+Connect using the alias you defined:
 
 ```bash
-OLD_PUB_KEY=~/.ssh/old_shared.pub SSH_USER=deploy KEY_TYPE=ed25519 ./ssh_key_rotate.sh
+ssh webserver
+ssh dbserver
 ```
 
-## Output
+New keys are stored in `~/.ssh/per-server/`. The script backs up your `~/.ssh/config` before modifying it.
 
-- Keys are written to `KEY_DIR` (one keypair per server alias).
-- `~/.ssh/config` is updated with a managed block and a timestamped backup.
-- Successful hosts are added to SSH config. Failed hosts are listed in the summary.
+## Environment variables
 
-## Connect Afterward
+| Variable | Default | Description |
+|---|---|---|
+| `OLD_PUB_KEY` | `~/.ssh/id_rsa.pub` | Public key to revoke |
+| `SSH_USER` | `root` | Default SSH user |
+| `KEY_TYPE` | `ed25519` | Key type (`ed25519` or `rsa`) |
+| `RSA_BITS` | `4096` | Bit size (RSA only) |
+| `KEY_DIR` | `~/.ssh/per-server` | Where new keys are stored |
+| `SERVERS_FILE` | `./servers.txt` | Path to your server list |
 
-Use the alias from `servers.txt`:
+## ⚠️ Disclaimer
 
-```bash
-ssh <alias>
-```
+This script performs SSH authentication changes across remote systems. It modifies `authorized_keys` files on servers you point it at, revokes existing keys, and rewrites your local `~/.ssh/config`.
 
-## ⚠️ Important Notice
+**Use it only on systems you own or have explicit authorization to manage.**
 
-This script performs **SSH authentication changes** across remote systems, including:
+Test in a safe environment before running against production. The author is not responsible for locked-out servers, lost access, disrupted services, or any other consequences arising from the use of this script. You run it at your own risk.
 
-* Generating new private/public key pairs
-* Deploying new keys to servers
-* **Removing an existing authorized key**
-* Modifying the local `~/.ssh/config`
+Back up your keys and configs before you start. The script creates a timestamped backup of `~/.ssh/config`, but ultimately **you** are responsible for your infrastructure.
 
-While safety checks and confirmations are included, incorrect usage or environmental differences can result in **loss of SSH access**, service disruption, or broken automation.
-
-**You are responsible for:**
-
-* Ensuring you have alternate access (console, cloud provider console, etc.)
-* Verifying connectivity before rotating keys in production
-* Safely storing generated private keys
-* Testing in non-production environments first
-
-Use at your own risk. The author is not liable for:
-
-* Loss of access to servers
-* Downtime or operational impact
-* Security issues resulting from improper key handling
-* Etc.
+<br>

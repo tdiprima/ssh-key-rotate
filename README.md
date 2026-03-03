@@ -53,6 +53,7 @@ ssh dbserver
 New keys are stored in `~/.ssh/per-server/`. The script backs up your `~/.ssh/config` before modifying it.
 
 ## Environment variables
+Defaults can be overridden with environment variables:
 
 | Variable | Default | Description |
 |---|---|---|

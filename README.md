@@ -1,4 +1,4 @@
-# ssh-key-rotate
+# SSH Key Rotate 🔐
 
 Tired of sharing one SSH key across every server? This script fixes that.
 

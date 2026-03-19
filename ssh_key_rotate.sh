@@ -197,7 +197,8 @@ END_MARKER="# <<< END MANAGED BLOCK <<<"
 
 # Remove old managed block if present
 if grep -qF "$START_MARKER" "$SSH_CONFIG"; then
-    sed -i "/$START_MARKER/,/$END_MARKER/d" "$SSH_CONFIG"
+    # sed -i "/$START_MARKER/,/$END_MARKER/d" "$SSH_CONFIG"
+    sed -i '' "/$START_MARKER/,/$END_MARKER/d" "$SSH_CONFIG"
 fi
 
 {
@@ -240,3 +241,5 @@ info "Keys stored in:  $KEY_DIR/"
 info "SSH config:      $SSH_CONFIG"
 echo ""
 info "Test with:  ssh <alias>    (e.g., ssh ${ALIASES[${HOSTS[0]}]})"
+
+# ssh-copy-id user@host

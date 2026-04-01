@@ -159,7 +159,6 @@ REMOTE_EOF
 
     if ssh -o ConnectTimeout=10 \
            -o StrictHostKeyChecking=accept-new \
-           -o BatchMode=yes \
            "${user}@${host}" \
            "NEW_PUB=$(printf '%q' "$NEW_PUB") OLD_KEY_CONTENT=$(printf '%q' "$OLD_KEY_CONTENT") bash -s" \
            <<< "$REMOTE_SCRIPT" 2>&1; then

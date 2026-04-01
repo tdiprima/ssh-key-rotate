@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # =============================================================================
-# One-off script: update SSH config for "grace" after IP change
+# One-off script: update SSH config for "machine" after IP change
 # Old IP: <IP_ADDRESS>  ->  New IP: <IP_ADDRESS>
 # Key already exists at ~/.ssh/per-server/id_ed25519_NAME
 # =============================================================================

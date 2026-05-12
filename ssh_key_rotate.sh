@@ -242,3 +242,4 @@ echo ""
 info "Test with:  ssh <alias>    (e.g., ssh ${ALIASES[${HOSTS[0]}]})"
 
 # ssh-copy-id user@host
+# ssh-copy-id -i ~/.ssh/my_custom_key.pub user@192.168.1.100

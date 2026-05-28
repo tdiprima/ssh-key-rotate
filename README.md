@@ -64,7 +64,7 @@ Defaults can be overridden with environment variables:
 | `KEY_DIR` | `~/.ssh/per-server` | Where new keys are stored |
 | `SERVERS_FILE` | `./servers.txt` | Path to your server list |
 
-## ⚠️ Disclaimer
+## ⚠ Disclaimer
 
 This script performs SSH authentication changes across remote systems. It modifies `authorized_keys` files on servers you point it at, revokes existing keys, and rewrites your local `~/.ssh/config`.
 
